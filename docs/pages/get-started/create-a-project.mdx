@@ -1,28 +1,114 @@
----
-title: Create a project
-description: Learn how to create a new Expo project.
-hideTOC: true
----
+---// ═══════════════════════════════════════════════════════════
+// L'ARGENT SILENCIEUX — Application Mobile Complète
+// React Native — Application de Monétisation Mobile
+// ═══════════════════════════════════════════════════════════
+// 
+// INSTALLATION :
+//   npx create-expo-app ArgentSilencieux --template blank
+//   cd ArgentSilencieux
+//   npx expo install @react-navigation/native @react-navigation/bottom-tabs
+//   npx expo install @react-navigation/stack
+//   npx expo install react-native-screens react-native-safe-area-context
+//   npx expo install react-native-chart-kit react-native-svg
+//   npx expo install @expo/vector-icons
+//   npx expo install react-native-async-storage/async-storage
+//   npx expo start
+// ═══════════════════════════════════════════════════════════
 
-import { Terminal } from '~/ui/components/Snippet';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'expo-status-bar';
+import { Ionicons } from '@expo/vector-icons';
 
-Expo is a React Native framework that makes developing Android and iOS apps easier. Our framework provides file-based routing, a standard library of native modules, and much more. Expo is open source with an active community on [GitHub](https://github.com/expo/expo) and [Discord](https://chat.expo.dev).
+// Screens
+import HomeScreen       from './screens/HomeScreen';
+import RevenueScreen    from './screens/RevenueScreen';
+import MethodsScreen    from './screens/MethodsScreen';
+import PlannerScreen    from './screens/PlannerScreen';
+import ProfileScreen    from './screens/ProfileScreen';
+import AddRevenueScreen from './screens/AddRevenueScreen';
+import MethodDetailScreen from './screens/MethodDetailScreen';
+import GoalScreen       from './screens/GoalScreen';
 
-We also make [Expo Application Services (EAS)](https://expo.dev/eas), a set of services that complement the Expo framework in each step of the development process.
+// Theme
+export const THEME = {
+  dark:   '#1a1a2e',
+  gold:   '#f0b030',
+  gold2:  '#c89020',
+  cream:  '#fff8f0',
+  body:   '#2c2c2c',
+  muted:  '#888888',
+  white:  '#ffffff',
+  green:  '#43a047',
+  blue:   '#1e88e5',
+  red:    '#e53935',
+  purple: '#8e24aa',
+  orange: '#fb8c00',
+  card:   '#ffffff',
+  bg:     '#f5f0e8',
+};
 
-## System requirements
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-- [Node.js (LTS)](https://nodejs.org/en/).
-- macOS, Windows (Powershell and [WSL 2](https://expo.fyi/wsl)), and Linux are supported.
+// ── Bottom Tab Navigator
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          const icons = {
+            Accueil:  focused ? 'home'           : 'home-outline',
+            Revenus:  focused ? 'wallet'         : 'wallet-outline',
+            Méthodes: focused ? 'grid'           : 'grid-outline',
+            Planning: focused ? 'calendar'       : 'calendar-outline',
+            Profil:   focused ? 'person-circle'  : 'person-circle-outline',
+          };
+          return <Ionicons name={icons[route.name]} size={size} color={color} />;
+        },
+        tabBarActiveTintColor:   THEME.gold,
+        tabBarInactiveTintColor: THEME.muted,
+        tabBarStyle: {
+          backgroundColor: THEME.dark,
+          borderTopColor:  THEME.gold + '30',
+          borderTopWidth:  1,
+          paddingBottom:   8,
+          paddingTop:      6,
+          height:          62,
+        },
+        tabBarLabelStyle: {
+          fontSize:    11,
+          fontWeight:  '600',
+          marginTop:   -2,
+        },
+        headerStyle:       { backgroundColor: THEME.dark },
+        headerTintColor:   THEME.gold,
+        headerTitleStyle:  { fontWeight: 'bold', fontSize: 18 },
+      })}
+    >
+      <Tab.Screen name="Accueil"  component={HomeScreen}    options={{ title: '💰 Accueil' }} />
+      <Tab.Screen name="Revenus"  component={RevenueScreen} options={{ title: '📊 Revenus' }} />
+      <Tab.Screen name="Méthodes" component={MethodsScreen} options={{ title: '🎯 Méthodes' }} />
+      <Tab.Screen name="Planning" component={PlannerScreen} options={{ title: '📅 Planning' }} />
+      <Tab.Screen name="Profil"   component={ProfileScreen} options={{ title: '👤 Profil' }} />
+    </Tab.Navigator>
+  );
+}
 
-We recommend starting with the default project created by `create-expo-app`. The default project includes example code to help you get started.
+// ── Root Stack Navigator
+export default function App() {
+  return (
+    <NavigationContainer>
+      <StatusBar style="light" />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main"         component={MainTabs} />
+        <Stack.Screen name="AddRevenue"   component={AddRevenueScreen} />
+        <Stack.Screen name="MethodDetail" component={MethodDetailScreen} />
+        <Stack.Screen name="Goal"         component={GoalScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
 
-To create a new project, run the following command:
-
-<Terminal cmd={['$ npx create-expo-app@latest --template default@sdk-55']} />
-
-> **Note:** During the SDK 55 transition period, `create-expo-app@latest` without the `--template` flag creates an SDK 54 project. If you plan to use Expo Go on a physical device, use an SDK 54 project. Otherwise, use `--template default@sdk-55` to create an SDK 55 project. You can also choose a different template by adding the [`--template` option](/more/create-expo/#--template).
-
-## Next step
-
-You have a project. Now it's time to set up your development environment so that you can start developing.
